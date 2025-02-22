@@ -11,8 +11,10 @@ class Codenames {
         this.redLeft = 8;
         this.blueLeft = 8;
         this.currentTeam = "빨강"; // 시작은 빨간 팀
+        this.isAnswerShown = false;
         this.renderBoard();
         this.giveHint();
+        this.setupAnswerButton();
     }
 
     shuffle(array) {
@@ -40,6 +42,7 @@ class Codenames {
             }
             table.appendChild(row);
         }
+        if (this.isAnswerShown) this.showAnswers(); // 정답 보기 상태면 유지
     }
 
     giveHint() {
@@ -75,11 +78,36 @@ class Codenames {
             alert(`${word}: 암살자입니다. ${this.currentTeam === "빨강" ? "파란" : "빨간"} 팀 승리!`);
         }
 
-        // 턴 전환 (민간인이나 상대 팀 요원을 선택하면 턴이 바뀜)
         if (type !== this.currentTeam) {
             this.currentTeam = this.currentTeam === "빨강" ? "파랑" : "빨강";
         }
         this.giveHint();
+    }
+
+    setupAnswerButton() {
+        const button = document.getElementById("show-answers");
+        button.addEventListener("click", () => {
+            this.isAnswerShown = !this.isAnswerShown;
+            button.textContent = this.isAnswerShown ? "정답 숨기기" : "정답 보기";
+            this.showAnswers();
+        });
+    }
+
+    showAnswers() {
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 5; j++) {
+                const cell = document.getElementById("board").rows[i].cells[j];
+                const type = this.key[i * 5 + j];
+                if (this.isAnswerShown) {
+                    if (type === "빨강") cell.style.backgroundColor = "#f44336";
+                    else if (type === "파랑") cell.style.backgroundColor = "#2196f3";
+                    else if (type === "민간인") cell.style.backgroundColor = "#ccc";
+                    else if (type === "암살자") cell.style.backgroundColor = "#000";
+                } else if (cell.style.backgroundColor === "") {
+                    cell.style.backgroundColor = "#fff"; // 선택되지 않은 셀만 초기화
+                }
+            }
+        }
     }
 }
 
