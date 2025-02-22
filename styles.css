@@ -32,9 +32,29 @@ h1 {
 
 #turn {
     font-size: 18px;
+    margin: 10px;
 }
 
 #current-team {
     font-weight: bold;
     color: #d32f2f; /* 기본은 빨간 팀 색상 */
+}
+
+#controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+#show-answers {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#show-answers:hover {
+    background-color: #45a049;
 }
