@@ -11,9 +11,8 @@ class Codenames {
         this.redLeft = 8;
         this.blueLeft = 8;
         this.currentTeam = "빨강"; // 시작은 빨간 팀
-        this.isAnswerShown = false;
         this.renderBoard();
-        this.giveHint();
+        this.updateTurn();
         this.setupAnswerButton();
     }
 
@@ -42,13 +41,9 @@ class Codenames {
             }
             table.appendChild(row);
         }
-        if (this.isAnswerShown) this.showAnswers(); // 정답 보기 상태면 유지
     }
 
-    giveHint() {
-        const teamWords = this.board.filter((_, idx) => this.key[idx] === this.currentTeam);
-        document.getElementById("hint").textContent = `${teamWords[0]} ${this.currentTeam === "빨강" ? this.redLeft : this.blueLeft}`;
-        document.getElementById("hint").style.color = this.currentTeam === "빨강" ? "#d32f2f" : "#2196f3";
+    updateTurn() {
         document.getElementById("current-team").textContent = this.currentTeam === "빨강" ? "빨간 팀" : "파란 팀";
         document.getElementById("current-team").style.color = this.currentTeam === "빨강" ? "#d32f2f" : "#2196f3";
     }
@@ -81,33 +76,34 @@ class Codenames {
         if (type !== this.currentTeam) {
             this.currentTeam = this.currentTeam === "빨강" ? "파랑" : "빨강";
         }
-        this.giveHint();
+        this.updateTurn();
     }
 
     setupAnswerButton() {
         const button = document.getElementById("show-answers");
-        button.addEventListener("click", () => {
-            this.isAnswerShown = !this.isAnswerShown;
-            button.textContent = this.isAnswerShown ? "정답 숨기기" : "정답 보기";
-            this.showAnswers();
-        });
+        button.addEventListener("click", () => this.showAnswersInPopup());
     }
 
-    showAnswers() {
+    showAnswersInPopup() {
+        const popup = window.open("", "Codenames Answers", "width=300,height=300");
+        let html = "<html><head><title>정답</title><style>table { border-collapse: collapse; } td { width: 50px; height: 50px; border: 1px solid #333; }</style></head><body><table>";
+        
         for (let i = 0; i < 5; i++) {
+            html += "<tr>";
             for (let j = 0; j < 5; j++) {
-                const cell = document.getElementById("board").rows[i].cells[j];
                 const type = this.key[i * 5 + j];
-                if (this.isAnswerShown) {
-                    if (type === "빨강") cell.style.backgroundColor = "#f44336";
-                    else if (type === "파랑") cell.style.backgroundColor = "#2196f3";
-                    else if (type === "민간인") cell.style.backgroundColor = "#ccc";
-                    else if (type === "암살자") cell.style.backgroundColor = "#000";
-                } else if (cell.style.backgroundColor === "") {
-                    cell.style.backgroundColor = "#fff"; // 선택되지 않은 셀만 초기화
-                }
+                let color = "";
+                if (type === "빨강") color = "#f44336";
+                else if (type === "파랑") color = "#2196f3";
+                else if (type === "민간인") color = "#ccc";
+                else if (type === "암살자") color = "#000";
+                html += `<td style="background-color: ${color};"></td>`;
             }
+            html += "</tr>";
         }
+        
+        html += "</table></body></html>";
+        popup.document.write(html);
     }
 }
 
