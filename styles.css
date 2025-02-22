@@ -25,11 +25,6 @@ h1 {
     background-color: #ddd;
 }
 
-#hint {
-    font-size: 20px;
-    margin: 15px;
-}
-
 #turn {
     font-size: 18px;
     margin: 10px;
@@ -57,4 +52,11 @@ h1 {
 
 #show-answers:hover {
     background-color: #45a049;
+}
+
+/* 팝업 창 스타일 */
+.popup-table td {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #333;
 }
