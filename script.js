@@ -11,6 +11,7 @@ class Codenames {
         this.redLeft = 8;
         this.blueLeft = 8;
         this.currentTeam = "빨강"; // 시작은 빨간 팀
+        this.popupWindow = null; // 팝업 창 참조
         this.renderBoard();
         this.updateTurn();
         this.setupAnswerButton();
@@ -81,12 +82,28 @@ class Codenames {
 
     setupAnswerButton() {
         const button = document.getElementById("show-answers");
-        button.addEventListener("click", () => this.showAnswersInPopup());
+        let isShown = false;
+        button.addEventListener("click", () => {
+            if (!isShown) {
+                this.showAnswersInPopup();
+                button.textContent = "정답 숨기기";
+                isShown = true;
+            } else {
+                this.hideAnswers();
+                button.textContent = "정답 보기";
+                isShown = false;
+            }
+        });
     }
 
     showAnswersInPopup() {
-        const popup = window.open("", "Codenames Answers", "width=300,height=300");
-        let html = "<html><head><title>정답</title><style>table { border-collapse: collapse; } td { width: 50px; height: 50px; border: 1px solid #333; }</style></head><body><table>";
+        if (this.popupWindow && !this.popupWindow.closed) {
+            this.popupWindow.focus();
+            return;
+        }
+
+        this.popupWindow = window.open("", "Codenames Answers", "width=300,height=300");
+        let html = "<html><head><title>정답</title><style>table { border-collapse: collapse; margin: 20px auto; } td { width: 50px; height: 50px; border: 1px solid #333; }</style></head><body><table>";
         
         for (let i = 0; i < 5; i++) {
             html += "<tr>";
@@ -103,7 +120,15 @@ class Codenames {
         }
         
         html += "</table></body></html>";
-        popup.document.write(html);
+        this.popupWindow.document.write(html);
+        this.popupWindow.document.close(); // 문서 작성을 완료
+    }
+
+    hideAnswers() {
+        if (this.popupWindow && !this.popupWindow.closed) {
+            this.popupWindow.close();
+            this.popupWindow = null;
+        }
     }
 }
 
